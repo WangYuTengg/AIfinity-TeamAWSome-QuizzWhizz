@@ -11,9 +11,9 @@ from fuzzywuzzy import fuzz
 from pipelines import pipeline
 import tempfile
 
-AWS_ACCESS_KEY_ID="AKIARHZOHOJVNZJSTJVU"
-AWS_SECRET_ACCESS_KEY="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"
-AWS_DEFAULT_REGION = "ap-southeast-1"
+AWS_ACCESS_KEY_ID="xxx"
+AWS_SECRET_ACCESS_KEY="xxx"
+AWS_DEFAULT_REGION = "xxx"
 BUCKET_NAME = 'teamawsome-testbucket'
 ################################################################################################################################
 
@@ -96,32 +96,31 @@ def mainExtraction(video_file, bucket):
     def start_transcription(bucket, job_name, file_url, wait_process=True):
         job_name = job_name.replace(' ', '_')
         job_name = job_name.replace('.mp3', '_uniqueJob')
-        # try:
-        response = transcribeclient.start_transcription_job(
-        TranscriptionJobName=job_name,
-        LanguageCode='en-US', 
-        MediaFormat='mp3',
-        Media={
-            'MediaFileUri': file_url,
-        },
-        OutputBucketName= bucket,
-        Settings={
-            'ShowSpeakerLabels': True,
-            'MaxSpeakerLabels': 2,
-        },
-        )
-        if wait_process:
-            while True:
-                status = transcribeclient.get_transcription_job(TranscriptionJobName = job_name)
-                if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED','FAILED']:
-                    break
-                print("Not ready yet")
-                time.sleep(20)
+        try:
+            response = transcribeclient.start_transcription_job(
+            TranscriptionJobName=job_name,
+            LanguageCode='en-US', 
+            MediaFormat='mp3',
+            Media={
+                'MediaFileUri': file_url,
+            },
+            OutputBucketName= bucket,
+            Settings={
+                'ShowSpeakerLabels': True,
+                'MaxSpeakerLabels': 2 },
+            )
+            if wait_process:
+                while True:
+                    status = transcribeclient.get_transcription_job(TranscriptionJobName = job_name)
+                    if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED','FAILED']:
+                        break
+                    print("Not ready yet")
+                    time.sleep(20)
 
-            print("Transcription Finished")
-            return status
-        # except:
-        #     print("transcription job for this file already done")
+                print("Transcription Finished")
+                return status
+        except:
+            print("transcription job for this file already done")
     
     # start transcription on audio file
     for index, row in audio_data.iterrows():
@@ -185,6 +184,7 @@ def mainExtraction2(video_file):
                 sharpen_filter=np.array([[-1,-1,-1],
                      [-1,9,-1],
                     [-1,-1,-1]])
+                # sharpen the image to make writing more legible
                 sharpened = cv2.filter2D(resized, -1, sharpen_filter)
     
                 # writing the extracted images
@@ -208,6 +208,7 @@ def mainExtraction2(video_file):
                       aws_access_key_id = AWS_ACCESS_KEY_ID,
                       aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
                       region_name = AWS_DEFAULT_REGION)    
+    
     for file in os.listdir(dir):
         try:
             fullpath = os.path.join(dir,file)
@@ -260,18 +261,23 @@ def mainExtraction2(video_file):
 
 if (uploaded_file):
     video_file = uploaded_file.name
-    # mainExtraction(video_file, BUCKET_NAME)
+    mainExtraction(video_file, BUCKET_NAME)
     # Opening JSON file
     f = open(video_file + "_uniqueJob.json")    
     data = json.load(f)
     text_audio = data['results']['transcripts'][0].get('transcript')
-    # Closing file
+    # Closing JSON file
     f.close()
-
     text_video = mainExtraction2(video_file)
 
-nlp = pipeline("e2e-qg")
-review_questions = nlp(text_audio)
-review_questions.extend(nlp(text_video))
-for question in review_questions:
-    st.write(question)
+# run extracted text through pipeline to generate questions
+questions = st.container()
+with questions:
+    nlp = pipeline("e2e-qg")
+    review_questions = nlp(text_audio)
+    review_questions.extend(nlp(text_video))
+    st.header("Questions Generated from Video: ")
+    i = 1
+    for question in review_questions:
+        st.write("Q" +str(i) + ")", question)
+        i += 1
