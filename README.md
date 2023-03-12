@@ -1,7 +1,8 @@
 # AWS AIfinity Hackathon 2023 - Project: QuizzWhizz (by Team AWSome)
 <img width="1438" src="https://github.com/WangYuTengg/AIfinity-TeamAWSome-QuizzWhizz/blob/master/img1.PNG?raw=true">
+
 ## Hackathon Theme
-> AI as Productivity Promoter As the emergence of stronger AI models (such as ChatGPT), intense human labour has a higher chance to be replace by AI. In an era of such trend, human beings might need to adapt to new paradigms of production with the help of AI. Try to give your proposal for such new paradigms, and build prototypes with resources provided.
+AI as Productivity Promoter As the emergence of stronger AI models (such as ChatGPT), intense human labour has a higher chance to be replace by AI. In an era of such trend, human beings might need to adapt to new paradigms of production with the help of AI. Try to give your proposal for such new paradigms, and build prototypes with resources provided.
 
 ###  Inspiration:
 As students, we face many challenges in our pursuit of academics. We felt that lectures can be very long and we tend to lose our focus. Thus, having a quiz available for each lecture video can help us be more attentive and learn better. We were inspired to build a project that can help ourselves and fellow students become more productive and efficient academically.
