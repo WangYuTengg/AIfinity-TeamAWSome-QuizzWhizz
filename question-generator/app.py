@@ -309,15 +309,7 @@ if fulltext:
     nlp = pipeline("e2e-qg")
     review_questions = nlp(text_audio)
     review_questions.extend(nlp(text_video))
-    # review_questions = ["What type of wind wind is caused by air moving from higher pressure to an area of lower air pressure?",
-    #                     "Why does air move from vold to warm?",
-    #                     "Why does air want to leave the balloon?",
-    #                     "What is a great sea breeze during the day",
-    #                     "What is Anenometer and Wind Vane?",
-    #                     "What is created during the day because ground heats up more quickly than water",
-    #                     "What is the Coriolis Effect Wind Chill Wind Chill?",
-    #                     ]
-
+    
     # display questions
     i = 1
     for question in review_questions:
